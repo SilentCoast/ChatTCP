@@ -3,6 +3,7 @@ using PropertyChanged;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Windows;
 
 namespace ChatTCP.ViewModels
@@ -72,21 +73,17 @@ namespace ChatTCP.ViewModels
         {
             int port = 8888;
             _client = new();
-            
-            try
-            {
-                _client.Connect(new IPEndPoint(Convert.ToInt64(ServerIp), port));
-                //_client.Connect(ServerIp, port); //подключение клиента
-                _reader = new StreamReader(_client.GetStream());
-                _writer = new StreamWriter(_client.GetStream());
-                if (_writer is null || _reader is null) return;
 
-                Task.Run(() => ReceiveMessageCoroutine(_reader));
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException();
-            }
+            //TODO: try catch
+            IPAddress ip = IPAddress.Parse(ServerIp);
+            _client.Connect(new IPEndPoint(ip, port));
+            //_client.Connect(ServerIp, port); //подключение клиента
+            _reader = new StreamReader(_client.GetStream());
+            _writer = new StreamWriter(_client.GetStream());
+            if (_writer is null || _reader is null) return;
+            //END
+            Task.Run(() => ReceiveMessageCoroutine(_reader));
+            
             ConsoleLogger.Log("Client started");
         }
         private async Task SendMessageAsync(StreamWriter writer)
