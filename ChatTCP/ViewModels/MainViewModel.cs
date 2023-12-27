@@ -44,14 +44,12 @@ namespace ChatTCP.ViewModels
                 if (IsServer)
                 {
                     Server = new ServerObject(ConsoleLogger);
-                    Client.StartClient(ServerIp);
                 }
-                else
+                if (Client.StartClient(ServerIp))
                 {
-                    Client.StartClient(ServerIp);
+                    IsConnected = true;
+                    //CheckConnectionCoroutine();
                 }
-                IsConnected = true;
-                CheckConnectionCoroutine();
             }
             else
             {
@@ -64,6 +62,9 @@ namespace ChatTCP.ViewModels
         {
             while(true)
             {
+                //TODO: state is always unknown
+                //TODO: stop checking when disconnected
+                
                 Debug.WriteLine(Client.tcpClient.GetState().ToString());
                 await Task.Delay(1000);
             }

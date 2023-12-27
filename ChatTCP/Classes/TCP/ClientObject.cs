@@ -30,24 +30,31 @@ namespace ChatTCP.Classes.TCP
             Writer = new StreamWriter(stream);
         }
 
-        public void StartClient(string serverIp)
+        public bool StartClient(string serverIp)
         {
             tcpClient = new TcpClient();
 
-            //TODO: try catch
-            IPAddress ip = IPAddress.Parse(serverIp);
-            tcpClient.Connect(new IPEndPoint(ip, DataHolder.Port));
-            NetworkStream stream = tcpClient.GetStream();
-            Reader = new StreamReader(stream);
-            Writer = new StreamWriter(stream);
-            if (Writer is null || Reader is null)
+            try
             {
-                throw new Exception("Error while getting Stream");
-            }
-            //END
-            Task.Run(ReceiveMessageCoroutine);
+                IPAddress ip = IPAddress.Parse(serverIp);
+                tcpClient.Connect(new IPEndPoint(ip, DataHolder.Port));
+                NetworkStream stream = tcpClient.GetStream();
+                Reader = new StreamReader(stream);
+                Writer = new StreamWriter(stream);
+                if (Writer is null || Reader is null)
+                {
+                    throw new Exception("Error while getting Stream");
+                }
+                Task.Run(ReceiveMessageCoroutine);
 
-            ConsoleLogger.Log("Client started");
+                ConsoleLogger.Log("Client started");
+            }
+            catch (Exception ex)
+            {
+                ConsoleLogger.Log(ex.Message);
+                return false;
+            }
+            return true;
         }
         public async Task SendMessageAsync(string MessageToSend)
         {

@@ -103,7 +103,6 @@ namespace ChatTCP.Classes.TCP
                     }
                     catch
                     {
-
                         message = $"Connection with {userName} has been lost";
                         Debug.WriteLine(message);
                         await BroadcastMessageAsync(message, id);
