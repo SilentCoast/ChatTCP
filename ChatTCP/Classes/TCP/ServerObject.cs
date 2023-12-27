@@ -11,8 +11,8 @@ namespace ChatTCP.Classes.TCP
     {
         private readonly ILogger logger;
 
-        TcpListener tcpListener = new TcpListener(IPAddress.Any, DataHolder.Port); // сервер для прослушивания
-        List<ClientObject> clients = new List<ClientObject>(); // все подключения
+        TcpListener tcpListener = new TcpListener(IPAddress.Any, DataHolder.Port); 
+        List<ClientObject> clients = new List<ClientObject>(); 
         public ServerObject(ILogger logger)
         {
             this.logger = logger;
@@ -20,13 +20,13 @@ namespace ChatTCP.Classes.TCP
         }
         protected internal void RemoveConnection(string id)
         {
-            // получаем по id закрытое подключение
             ClientObject? client = clients.FirstOrDefault(c => c.Id == id);
-            // и удаляем его из списка подключений
-            if (client != null) clients.Remove(client);
+            if (client != null)
+            {
+                clients.Remove(client);
+            }
             client?.Close();
         }
-        // прослушивание входящих подключений
         protected internal async Task ListenAsync()
         {
             try
@@ -52,26 +52,24 @@ namespace ChatTCP.Classes.TCP
             }
         }
 
-        // трансляция сообщения подключенным клиентам
         protected internal async Task BroadcastMessageAsync(string message, string id)
         {
             foreach (var client in clients)
             {
-                //if (client.Id != id) // если id клиента не равно id отправителя
+                //if (client.Id != id) 
                 {
-                    await client.Writer.WriteLineAsync(message); //передача данных
+                    await client.Writer.WriteLineAsync(message); 
                     await client.Writer.FlushAsync();
                 }
             }
         }
-        // отключение всех клиентов
         protected internal void Disconnect()
         {
             foreach (var client in clients)
             {
-                client.Close(); //отключение клиента
+                client.Close(); 
             }
-            tcpListener.Stop(); //остановка сервера
+            tcpListener.Stop(); 
         }
         public async Task ProcessAsync(StreamReader reader, string id)
         {
@@ -119,7 +117,6 @@ namespace ChatTCP.Classes.TCP
             }
             finally
             {
-                // в случае выхода из цикла закрываем ресурсы
                 RemoveConnection(id);
             }
         }
