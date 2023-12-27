@@ -19,7 +19,6 @@
          Background="{DynamicResource MaterialDesignPaper}"
          FontFamily="{DynamicResource MaterialDesignFont}">
     <Window.Resources>
-        <converters:StringBuilderToStringConverter x:Key="StringBuilderToStringConverter"/>
         <converters:ReverseBooleanConverter x:Key="ReverseBooleanConverter"/>
         <converters:BooleanToConnectedConverter x:Key="BoolToConnectedConverter"/>
     </Window.Resources>
@@ -35,15 +34,15 @@
 
         <Grid>
             <Border BorderThickness="2" BorderBrush="Black"></Border>
-            <ScrollViewer Margin="15" MinHeight="200">
+            <ScrollViewer x:Name="scrollConsole" Style="{StaticResource mScroll}">
                 <TextBlock Text="{Binding ConsoleText}" Style="{DynamicResource MaterialDesignBody1TextBlock}"
                     TextWrapping="Wrap"/>
             </ScrollViewer>
         </Grid>
         
-        <Grid Grid.Column="1" >
+        <Grid Grid.Column="1">
             <Border BorderThickness="2" BorderBrush="Black"></Border>
-            <ScrollViewer Margin="15" MinHeight="200" >
+            <ScrollViewer x:Name="scrollMessages" Style="{StaticResource mScroll}">
                 <TextBlock Style="{DynamicResource MaterialDesignBody1TextBlock}"
                     Text="{Binding MessagesText}" TextWrapping="Wrap"/>
             </ScrollViewer>

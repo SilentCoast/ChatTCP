@@ -9,7 +9,7 @@ namespace ChatTCP.Classes.Logger
 
         public void Log(string message)
         {
-            Logged?.Invoke(this, new MessageEventArgs() { Message = "\n" + message });
+            Logged?.Invoke(this, new MessageEventArgs() { Message = message + "\n" });
         }
 
     }
