@@ -30,8 +30,6 @@ namespace ChatTCP.ViewModels
             MessageLogger.Logged += MessageLogger_Logged;
             Client = new ClientObject(ConsoleLogger, MessageLogger);
         }
-        
-
         private RelayCommand connect;
         public RelayCommand Connect => connect ?? (connect = new RelayCommand(p =>
         {
@@ -39,7 +37,7 @@ namespace ChatTCP.ViewModels
             {
                 if (IsServer)
                 {
-                    StartServer();
+                    Server = new ServerObject(ConsoleLogger);
                     Client.StartClient(ServerIp);
                 }
                 else
@@ -63,10 +61,9 @@ namespace ChatTCP.ViewModels
             MessageToSend = string.Empty;
         }));
         
-        private void StartServer()
-        {
-            Server = new ServerObject(ConsoleLogger);
-        }
+
+
+
         private void IsServerChanged()
         {
             if (IsServer)

@@ -3,6 +3,7 @@ using System.Net;
 using System.Diagnostics;
 using System.IO;
 using ChatTCP.Classes.Logger;
+using Newtonsoft.Json;
 
 namespace ChatTCP.Classes.TCP
 {
@@ -36,10 +37,9 @@ namespace ChatTCP.Classes.TCP
                 while (true)
                 {
                     TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
-
-                    //Client clientObject = new Client(tcpClient, this);
-                    //clients.Add(clientObject);
-                    Task.Run(() => ProcessAsync(new StreamReader(tcpClient.GetStream()), Guid.NewGuid().ToString()));
+                    ClientObject client = new ClientObject(tcpClient);
+                    clients.Add(client);
+                    Task.Run(() => ProcessAsync(client.Reader, client.Id));
                 }
             }
             catch (Exception ex)
@@ -57,7 +57,7 @@ namespace ChatTCP.Classes.TCP
         {
             foreach (var client in clients)
             {
-                if (client.Id != id) // если id клиента не равно id отправителя
+                //if (client.Id != id) // если id клиента не равно id отправителя
                 {
                     await client.Writer.WriteLineAsync(message); //передача данных
                     await client.Writer.FlushAsync();
@@ -77,24 +77,37 @@ namespace ChatTCP.Classes.TCP
         {
             try
             {
-                // получаем имя пользователя
-                string? userName = await reader.ReadLineAsync();
-                string? message = $"{userName} вошел в чат";
-                // посылаем сообщение о входе в чат всем подключенным пользователям
+                string? jsonString = await reader.ReadLineAsync();
+                PacketDTO packet = JsonConvert.DeserializeObject<PacketDTO>(jsonString);
+                string? userName = packet.message;
+                string? message = $"{userName} joined";
                 await BroadcastMessageAsync(message, id);
-                // в бесконечном цикле получаем сообщения от клиента
                 while (true)
                 {
                     try
                     {
-                        message = await reader.ReadLineAsync();
-                        if (message == null) continue;
-                        message = $"{userName}: {message}";
-                        await BroadcastMessageAsync(message, id);
+                        jsonString = await reader.ReadLineAsync();
+                        if (jsonString == null) continue;
+
+                        packet = JsonConvert.DeserializeObject<PacketDTO>(jsonString);
+                        
+                        if (packet.command == Glossary.message)
+                        {
+                            message = $"{userName}: {packet.message}";
+                            await BroadcastMessageAsync(message, id);
+                        }
+                        else if(packet.command == Glossary.disconnect)
+                        {
+                            message = $"{userName} disconnected";
+                            await BroadcastMessageAsync(message, id);
+                            break;
+                        }
                     }
                     catch
                     {
-                        message = $"{userName} покинул чат";
+
+                        message = $"Connection with {userName} has been lost";
+                        Debug.WriteLine(message);
                         await BroadcastMessageAsync(message, id);
                         break;
                     }

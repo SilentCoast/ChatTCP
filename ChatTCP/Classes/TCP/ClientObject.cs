@@ -2,6 +2,9 @@
 using System.Net.Sockets;
 using System.Net;
 using ChatTCP.Classes.Logger;
+using System.Diagnostics;
+using Newtonsoft.Json;
+using System.Windows;
 
 namespace ChatTCP.Classes.TCP
 {
@@ -19,11 +22,12 @@ namespace ChatTCP.Classes.TCP
             ConsoleLogger = consoleLogger;
             MessageLogger = messageLogger;
         }
-        public void Close()
+        public ClientObject(TcpClient tcpClient)
         {
-            Writer.Close();
-            Reader.Close();
-            tcpClient.Close();
+            this.tcpClient = tcpClient;
+            NetworkStream stream = tcpClient.GetStream();
+            Reader = new StreamReader(stream);
+            Writer = new StreamWriter(stream);
         }
 
         public void StartClient(string serverIp)
@@ -47,9 +51,24 @@ namespace ChatTCP.Classes.TCP
         }
         public async Task SendMessageAsync(string MessageToSend)
         {
-            await Writer.WriteLineAsync(MessageToSend);
+            PacketDTO packet = new PacketDTO()
+            {
+                command = Glossary.message,
+                message = MessageToSend
+            };
+            string jsonString = JsonConvert.SerializeObject(packet);
+            await Writer.WriteLineAsync(jsonString);
             await Writer.FlushAsync();
-            MessageLogger.Log(MessageToSend);
+            if(packet.command == null)
+            {
+                MessageLogger.Log(MessageToSend);
+            }
+        }
+        public async Task SendMessageAsync(PacketDTO packet)
+        {
+            string jsonString = JsonConvert.SerializeObject(packet);
+            await Writer.WriteLineAsync(jsonString);
+            await Writer.FlushAsync();
         }
         private async Task ReceiveMessageCoroutine()
         {
@@ -67,11 +86,22 @@ namespace ChatTCP.Classes.TCP
                         MessageLogger.Log(message);
                     }
                 }
-                catch
+                catch(Exception ex) 
                 {
+                    Debug.WriteLine(ex);
                     break;
                 }
             }
+        }
+        public void Close()
+        {
+            SendMessageAsync(new PacketDTO()
+            {
+                command = Glossary.disconnect
+            });
+            Writer.Close();
+            Reader.Close();
+            tcpClient.Close();
         }
     }
 }
