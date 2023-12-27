@@ -1,4 +1,4 @@
-﻿namespace ChatTCP.Classes
+﻿namespace ChatTCP.Classes.Logger
 {
     public interface ILogger
     {

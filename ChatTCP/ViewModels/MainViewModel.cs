@@ -1,10 +1,10 @@
 ﻿using ChatTCP.Classes;
+using ChatTCP.Classes.Logger;
+using ChatTCP.Classes.TCP;
 using PropertyChanged;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Windows;
 
 namespace ChatTCP.ViewModels
 {
@@ -18,11 +18,8 @@ namespace ChatTCP.ViewModels
         public string ConsoleText {  get; set; }
         public string MessagesText {  get; set; }
         public string MessageToSend { get; set; }
-
-        StreamReader? _reader = null;
-        StreamWriter? _writer = null;
-        TcpClient _client;
-        ServerObject server;
+        ClientObject Client { get; set; }
+        ServerObject Server { get; set; }
         ILogger ConsoleLogger { get; set; }
         ILogger MessageLogger { get; set; }
         public MainViewModel()
@@ -31,6 +28,7 @@ namespace ChatTCP.ViewModels
             ConsoleLogger.Logged += ConsoleLogger_Logged;
             MessageLogger = new Logger();
             MessageLogger.Logged += MessageLogger_Logged;
+            Client = new ClientObject(ConsoleLogger, MessageLogger);
         }
         
 
@@ -42,77 +40,32 @@ namespace ChatTCP.ViewModels
                 if (IsServer)
                 {
                     StartServer();
-                    StartClient();
+                    Client.StartClient(ServerIp);
                 }
                 else
                 {
-                    StartClient();
+                    Client.StartClient(ServerIp);
                 }
                 IsConnected = true;
             }
             else
             {
-                server.Disconnect();
+                Server?.Disconnect();
+                Client.Close();
                 IsConnected = false;
             }
-            
         }));
         private RelayCommand sendMessage;
 
-        public RelayCommand SendMessage => sendMessage ?? (sendMessage = new RelayCommand(p =>
+        public RelayCommand SendMessage => sendMessage ?? (sendMessage = new RelayCommand(async p =>
         {
-            SendMessageAsync(_writer);
+            await Client.SendMessageAsync(MessageToSend);
+            MessageToSend = string.Empty;
         }));
         
-        private async void StartServer()
+        private void StartServer()
         {
-            server = new ServerObject(ConsoleLogger);
-            await server.ListenAsync();
-        }
-        private async void StartClient()
-        {
-            _client = new();
-
-            //TODO: try catch
-            IPAddress ip = IPAddress.Parse(ServerIp);
-            _client.Connect(new IPEndPoint(ip, DataHolder.port));
-            //_client.Connect(ServerIp, port); //подключение клиента
-            _reader = new StreamReader(_client.GetStream());
-            _writer = new StreamWriter(_client.GetStream());
-            if (_writer is null || _reader is null) return;
-            //END
-            Task.Run(() => ReceiveMessageCoroutine(_reader));
-            
-            ConsoleLogger.Log("Client started");
-        }
-        private async Task SendMessageAsync(StreamWriter writer)
-        {
-            MessageLogger.Log(MessageToSend);
-            await writer.WriteLineAsync(MessageToSend);
-            await writer.FlushAsync();
-            MessageToSend = string.Empty;
-        }
-        private async Task ReceiveMessageCoroutine(StreamReader reader)
-        {
-            while (true)
-            {
-                try
-                {
-                    string? message = await reader.ReadLineAsync();
-                    if (string.IsNullOrEmpty(message)) 
-                    { 
-                        continue; 
-                    }
-                    else
-                    {
-                        MessagesText += "\n" + message;
-                    }
-                }
-                catch
-                {
-                    break;
-                }
-            }
+            Server = new ServerObject(ConsoleLogger);
         }
         private void IsServerChanged()
         {
@@ -141,13 +94,6 @@ namespace ChatTCP.ViewModels
         private void ConsoleLogger_Logged(object sender, MessageEventArgs e)
         {
             ConsoleText += e.Message;
-        }
-
-        ~MainViewModel()
-        {
-            _writer?.Close();
-            _reader?.Close();
-            _client.Dispose();
         }
     }
 }

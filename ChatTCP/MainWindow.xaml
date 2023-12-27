@@ -65,13 +65,15 @@
             
             <Separator Style="{StaticResource SeparatorHeightMedium}"/>
             <TextBox Style="{DynamicResource MaterialDesignFilledTextBox}" materialDesign:HintAssist.Hint="Message"
-                     Text="{Binding MessageToSend, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap">
+                     Text="{Binding MessageToSend, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap"
+                     IsEnabled="{Binding IsConnected}">
                 <TextBox.InputBindings>
                     <KeyBinding Key="Enter" Command="{Binding SendMessage}"/>
                 </TextBox.InputBindings>
             </TextBox>
             <Separator Style="{StaticResource SeparatorHeightMedium}"/>
-            <Button Command="{Binding SendMessage}" Style="{DynamicResource MaterialDesignFlatAccentBgButton}">Send</Button>
+            <Button Command="{Binding SendMessage}" Style="{DynamicResource MaterialDesignFlatAccentBgButton}"
+                IsEnabled="{Binding IsConnected}">Send</Button>
         </StackPanel>
         
     </Grid>

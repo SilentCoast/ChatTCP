@@ -1,6 +1,6 @@
 ﻿using PropertyChanged;
 
-namespace ChatTCP.Classes
+namespace ChatTCP.Classes.Logger
 {
     [AddINotifyPropertyChangedInterface]
     public class Logger : ILogger
@@ -11,6 +11,6 @@ namespace ChatTCP.Classes
         {
             Logged?.Invoke(this, new MessageEventArgs() { Message = "\n" + message });
         }
-        
+
     }
 }

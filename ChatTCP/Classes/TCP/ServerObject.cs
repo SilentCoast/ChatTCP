@@ -1,19 +1,21 @@
 ﻿using System.Net.Sockets;
 using System.Net;
-using ChatTCP.Classes;
 using System.Diagnostics;
+using System.IO;
+using ChatTCP.Classes.Logger;
 
-namespace ChatTCP
+namespace ChatTCP.Classes.TCP
 {
     public class ServerObject
     {
         private readonly ILogger logger;
-        
-        TcpListener tcpListener = new TcpListener(IPAddress.Any, DataHolder.port); // сервер для прослушивания
+
+        TcpListener tcpListener = new TcpListener(IPAddress.Any, DataHolder.Port); // сервер для прослушивания
         List<ClientObject> clients = new List<ClientObject>(); // все подключения
         public ServerObject(ILogger logger)
         {
             this.logger = logger;
+            ListenAsync();
         }
         protected internal void RemoveConnection(string id)
         {
@@ -29,15 +31,15 @@ namespace ChatTCP
             try
             {
                 tcpListener.Start();
-                
+
                 logger.Log("Server started");
                 while (true)
                 {
                     TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
 
-                    ClientObject clientObject = new ClientObject(tcpClient, this);
-                    clients.Add(clientObject);
-                    Task.Run(clientObject.ProcessAsync);
+                    //Client clientObject = new Client(tcpClient, this);
+                    //clients.Add(clientObject);
+                    Task.Run(() => ProcessAsync(new StreamReader(tcpClient.GetStream()), Guid.NewGuid().ToString()));
                 }
             }
             catch (Exception ex)
@@ -70,6 +72,43 @@ namespace ChatTCP
                 client.Close(); //отключение клиента
             }
             tcpListener.Stop(); //остановка сервера
+        }
+        public async Task ProcessAsync(StreamReader reader, string id)
+        {
+            try
+            {
+                // получаем имя пользователя
+                string? userName = await reader.ReadLineAsync();
+                string? message = $"{userName} вошел в чат";
+                // посылаем сообщение о входе в чат всем подключенным пользователям
+                await BroadcastMessageAsync(message, id);
+                // в бесконечном цикле получаем сообщения от клиента
+                while (true)
+                {
+                    try
+                    {
+                        message = await reader.ReadLineAsync();
+                        if (message == null) continue;
+                        message = $"{userName}: {message}";
+                        await BroadcastMessageAsync(message, id);
+                    }
+                    catch
+                    {
+                        message = $"{userName} покинул чат";
+                        await BroadcastMessageAsync(message, id);
+                        break;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw new NotImplementedException();
+            }
+            finally
+            {
+                // в случае выхода из цикла закрываем ресурсы
+                RemoveConnection(id);
+            }
         }
     }
 }
