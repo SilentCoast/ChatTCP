@@ -21,6 +21,7 @@
     <Window.Resources>
         <converters:StringBuilderToStringConverter x:Key="StringBuilderToStringConverter"/>
         <converters:ReverseBooleanConverter x:Key="ReverseBooleanConverter"/>
+        <converters:BooleanToConnectedConverter x:Key="BoolToConnectedConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -53,7 +54,8 @@
             <Separator Style="{StaticResource SeparatorHeightMedium}"/>
             <CheckBox IsChecked="{Binding IsServer}" Style="{DynamicResource MaterialDesignAccentCheckBox}">Host</CheckBox>
             <Separator Style="{StaticResource SeparatorHeightMedium}"/>
-            <Button Command="{Binding Connect}" Style="{DynamicResource MaterialDesignFlatAccentBgButton}">Connect</Button>
+            <Button Command="{Binding Connect}" Style="{DynamicResource MaterialDesignFlatAccentBgButton}"
+                    Content="{Binding IsConnected, Converter={StaticResource BoolToConnectedConverter}}"></Button>
         </StackPanel>
 
         

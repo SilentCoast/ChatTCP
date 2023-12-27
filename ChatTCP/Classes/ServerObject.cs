@@ -1,6 +1,7 @@
 ﻿using System.Net.Sockets;
 using System.Net;
 using ChatTCP.Classes;
+using System.Diagnostics;
 
 namespace ChatTCP
 {
@@ -41,7 +42,7 @@ namespace ChatTCP
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                Debug.WriteLine(ex);
             }
             finally
             {

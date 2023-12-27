@@ -12,6 +12,7 @@ namespace ChatTCP.ViewModels
     {
         private bool isServer;
         public bool IsServer { get => isServer; set { isServer = value; IsServerChanged(); } }
+        public bool IsConnected { get; set; }
         public string ServerIp {  get; set; }
         public string ConsoleText {  get; set; }
         public string MessagesText {  get; set; }
@@ -20,6 +21,7 @@ namespace ChatTCP.ViewModels
         StreamReader? _reader = null;
         StreamWriter? _writer = null;
         TcpClient _client;
+        ServerObject server;
         ILogger ConsoleLogger { get; set; }
         ILogger MessageLogger { get; set; }
         public MainViewModel()
@@ -29,47 +31,30 @@ namespace ChatTCP.ViewModels
             MessageLogger = new Logger();
             MessageLogger.Logged += MessageLogger_Logged;
         }
-        private void IsServerChanged()
-        {
-            if (IsServer)
-            {
-                ServerIp = GetLocalIPAddress();
-            }
-        }
-        public static string GetLocalIPAddress()
-        {
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (var ip in host.AddressList)
-            {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    return ip.ToString();
-                }
-            }
-            throw new Exception("No network adapters with an IPv4 address in the system!");
-        }
-        private void MessageLogger_Logged(object sender, MessageEventArgs e)
-        {
-            MessagesText += e.Message;
-        }
-
-        private void ConsoleLogger_Logged(object sender, MessageEventArgs e)
-        {
-            ConsoleText += e.Message;
-        }
+        
 
         private RelayCommand connect;
         public RelayCommand Connect => connect ?? (connect = new RelayCommand(p =>
         {
-            if (IsServer)
+            if(!IsConnected)
             {
-                StartServer();
-                StartClient();
+                if (IsServer)
+                {
+                    StartServer();
+                    StartClient();
+                }
+                else
+                {
+                    StartClient();
+                }
+                IsConnected = true;
             }
             else
             {
-                StartClient();
+                server.Disconnect();
+                IsConnected = false;
             }
+            
         }));
         private RelayCommand sendMessage;
 
@@ -80,9 +65,8 @@ namespace ChatTCP.ViewModels
         
         private async void StartServer()
         {
-            ServerObject server = new ServerObject(ConsoleLogger);
+            server = new ServerObject(ConsoleLogger);
             await server.ListenAsync();
-            ConsoleLogger.Log("Server started");
         }
         private async void StartClient()
         {
@@ -91,7 +75,8 @@ namespace ChatTCP.ViewModels
             
             try
             {
-                _client.Connect(ServerIp, port); //подключение клиента
+                _client.Connect(new IPEndPoint(Convert.ToInt64(ServerIp), port));
+                //_client.Connect(ServerIp, port); //подключение клиента
                 _reader = new StreamReader(_client.GetStream());
                 _writer = new StreamWriter(_client.GetStream());
                 if (_writer is null || _reader is null) return;
@@ -133,7 +118,34 @@ namespace ChatTCP.ViewModels
                 }
             }
         }
+        private void IsServerChanged()
+        {
+            if (IsServer)
+            {
+                ServerIp = GetLocalIPAddress();
+            }
+        }
+        public static string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            throw new Exception("No network adapters with an IPv4 address in the system!");
+        }
+        private void MessageLogger_Logged(object sender, MessageEventArgs e)
+        {
+            MessagesText += e.Message;
+        }
 
+        private void ConsoleLogger_Logged(object sender, MessageEventArgs e)
+        {
+            ConsoleText += e.Message;
+        }
 
         ~MainViewModel()
         {
