@@ -1,7 +1,9 @@
 ﻿using ChatTCP.Classes;
+using ChatTCP.Classes.Extensions;
 using ChatTCP.Classes.Logger;
 using ChatTCP.Classes.TCP;
 using PropertyChanged;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -35,7 +37,7 @@ namespace ChatTCP.ViewModels
             Client = new ClientObject(ConsoleLogger, MessageLogger);
         }
         private RelayCommand connect;
-        public RelayCommand Connect => connect ?? (connect = new RelayCommand(p =>
+        public RelayCommand Connect => connect ?? (connect = new RelayCommand(async p =>
         {
             if(!IsConnected)
             {
@@ -49,6 +51,7 @@ namespace ChatTCP.ViewModels
                     Client.StartClient(ServerIp);
                 }
                 IsConnected = true;
+                CheckConnectionCoroutine();
             }
             else
             {
@@ -57,6 +60,14 @@ namespace ChatTCP.ViewModels
                 IsConnected = false;
             }
         }));
+        private async Task CheckConnectionCoroutine()
+        {
+            while(true)
+            {
+                Debug.WriteLine(Client.tcpClient.GetState().ToString());
+                await Task.Delay(1000);
+            }
+        }
         private RelayCommand sendMessage;
 
         public RelayCommand SendMessage => sendMessage ?? (sendMessage = new RelayCommand(async p =>
