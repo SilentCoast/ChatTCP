@@ -89,12 +89,12 @@ namespace ChatTCP.Classes.TCP
 
                         packet = JsonConvert.DeserializeObject<PacketDTO>(jsonString);
                         
-                        if (packet.command == Glossary.message)
+                        if (packet.command == TCPCommand.message)
                         {
                             message = $"{userName}: {packet.message}";
                             await BroadcastMessageAsync(message, id);
                         }
-                        else if(packet.command == Glossary.disconnect)
+                        else if(packet.command == TCPCommand.disconnect)
                         {
                             message = $"{userName} disconnected";
                             await BroadcastMessageAsync(message, id);

@@ -53,7 +53,7 @@ namespace ChatTCP.Classes.TCP
         {
             PacketDTO packet = new PacketDTO()
             {
-                command = Glossary.message,
+                command = TCPCommand.message,
                 message = MessageToSend
             };
             string jsonString = JsonConvert.SerializeObject(packet);
@@ -97,7 +97,7 @@ namespace ChatTCP.Classes.TCP
         {
             SendMessageAsync(new PacketDTO()
             {
-                command = Glossary.disconnect
+                command = TCPCommand.disconnect
             });
             Writer.Close();
             Reader.Close();
