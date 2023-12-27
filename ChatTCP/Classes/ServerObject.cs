@@ -9,7 +9,7 @@ namespace ChatTCP
     {
         private readonly ILogger logger;
         
-        TcpListener tcpListener = new TcpListener(IPAddress.Any, 8888); // сервер для прослушивания
+        TcpListener tcpListener = new TcpListener(IPAddress.Any, DataHolder.port); // сервер для прослушивания
         List<ClientObject> clients = new List<ClientObject>(); // все подключения
         public ServerObject(ILogger logger)
         {

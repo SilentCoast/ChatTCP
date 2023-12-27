@@ -71,12 +71,11 @@ namespace ChatTCP.ViewModels
         }
         private async void StartClient()
         {
-            int port = 8888;
             _client = new();
 
             //TODO: try catch
             IPAddress ip = IPAddress.Parse(ServerIp);
-            _client.Connect(new IPEndPoint(ip, port));
+            _client.Connect(new IPEndPoint(ip, DataHolder.port));
             //_client.Connect(ServerIp, port); //подключение клиента
             _reader = new StreamReader(_client.GetStream());
             _writer = new StreamWriter(_client.GetStream());
