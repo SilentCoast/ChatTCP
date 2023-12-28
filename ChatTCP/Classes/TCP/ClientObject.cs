@@ -66,10 +66,6 @@ namespace ChatTCP.Classes.TCP
             string jsonString = JsonConvert.SerializeObject(packet);
             await Writer.WriteLineAsync(jsonString);
             await Writer.FlushAsync();
-            if(packet.command == null)
-            {
-                MessageLogger.Log(MessageToSend);
-            }
         }
         public async Task SendMessageAsync(PacketDTO packet)
         {
