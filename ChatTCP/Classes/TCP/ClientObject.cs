@@ -4,7 +4,6 @@ using System.Net;
 using ChatTCP.Classes.Logger;
 using System.Diagnostics;
 using Newtonsoft.Json;
-using System.Windows;
 
 namespace ChatTCP.Classes.TCP
 {
@@ -79,14 +78,27 @@ namespace ChatTCP.Classes.TCP
             {
                 try
                 {
-                    string? message = await Reader.ReadLineAsync();
-                    if (string.IsNullOrEmpty(message))
+                    string? response = await Reader.ReadLineAsync();
+                    if (string.IsNullOrEmpty(response))
                     {
                         continue;
                     }
                     else
                     {
-                        MessageLogger.Log(message);
+                        PacketDTO packet = JsonConvert.DeserializeObject<PacketDTO>(response);
+                        if (packet != null)
+                        {
+                            if(packet.command == TCPCommand.message)
+                            {
+                                MessageLogger.Log(packet.message);
+                            }
+                            else if(packet.command == TCPCommand.disconnect)
+                            {
+                                Close();
+                                Disconnected?.Invoke(this, EventArgs.Empty);
+                                ConsoleLogger.Log("Server disconnected");
+                            }
+                        }
                     }
                 }
                 catch(Exception ex) 
@@ -96,6 +108,9 @@ namespace ChatTCP.Classes.TCP
                 }
             }
         }
+        /// <summary>
+        /// Disconects this TCPClient
+        /// </summary>
         public void Close()
         {
             SendMessageAsync(new PacketDTO()
@@ -106,5 +121,6 @@ namespace ChatTCP.Classes.TCP
             Reader.Close();
             tcpClient.Close();
         }
+        public event EventHandler Disconnected;
     }
 }

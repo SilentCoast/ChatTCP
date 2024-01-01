@@ -52,7 +52,7 @@ namespace ChatTCP.Classes.TCP
             }
         }
 
-        protected internal async Task BroadcastMessageAsync(string message, string id)
+        protected internal async Task BroadcastMessageAsync(string message, string id = null)
         {
             foreach (var client in clients)
             {
@@ -65,11 +65,16 @@ namespace ChatTCP.Classes.TCP
         }
         protected internal void Disconnect()
         {
+            PacketDTO packet = new PacketDTO()
+            {
+                command = TCPCommand.disconnect
+            };
             foreach (var client in clients)
             {
                 client.Close(); 
             }
             tcpListener.Stop(); 
+            BroadcastMessageAsync(JsonConvert.SerializeObject(packet));
         }
         public async Task ProcessAsync(StreamReader reader, string id)
         {
@@ -78,8 +83,9 @@ namespace ChatTCP.Classes.TCP
                 string? jsonString = await reader.ReadLineAsync();
                 PacketDTO packet = JsonConvert.DeserializeObject<PacketDTO>(jsonString);
                 string? userName = packet.message;
-                string? message = $"{userName} joined";
-                await BroadcastMessageAsync(message, id);
+                packet.message = $"{userName} joined";
+
+                await BroadcastMessageAsync(JsonConvert.SerializeObject(packet), id);
                 while (true)
                 {
                     try
@@ -91,21 +97,22 @@ namespace ChatTCP.Classes.TCP
                         
                         if (packet.command == TCPCommand.message)
                         {
-                            message = $"{userName}: {packet.message}";
-                            await BroadcastMessageAsync(message, id);
+                            packet.message = $"{userName}: {packet.message}";
+                            await BroadcastMessageAsync(JsonConvert.SerializeObject(packet), id);
                         }
                         else if(packet.command == TCPCommand.disconnect)
                         {
-                            message = $"{userName} disconnected";
-                            await BroadcastMessageAsync(message, id);
+                            packet.command = TCPCommand.message;
+                            packet.message = $"{userName} disconnected";
+                            await BroadcastMessageAsync(JsonConvert.SerializeObject(packet), id);
                             break;
                         }
                     }
                     catch
                     {
-                        message = $"Connection with {userName} has been lost";
-                        Debug.WriteLine(message);
-                        await BroadcastMessageAsync(message, id);
+                        packet.message = $"Connection with {userName} has been lost";
+                        Debug.WriteLine(packet.message);
+                        await BroadcastMessageAsync(JsonConvert.SerializeObject(packet), id);
                         break;
                     }
                 }

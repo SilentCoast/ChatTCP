@@ -35,11 +35,25 @@ namespace ChatTCP.ViewModels
             MessageLogger.Logged += MessageLogger_Logged;
             this.ErrorLogger = ErrorLogger;
             Client = new ClientObject(ConsoleLogger, MessageLogger);
+            Client.Disconnected += Client_Disconnected;
         }
+
+        private void Client_Disconnected(object? sender, EventArgs e)
+        {
+            IsConnected = false;
+        }
+
         private RelayCommand connect;
         public RelayCommand Connect => connect ?? (connect = new RelayCommand(async p =>
         {
-            if(!IsConnected)
+            //TODO: freeze of UI when waiting to time out when connecting to non existent server
+            if (IsConnected)
+            {
+                Server?.Disconnect();
+                Client.Close();
+                IsConnected = false;
+            }
+            else
             {
                 if (IsServer)
                 {
@@ -50,12 +64,6 @@ namespace ChatTCP.ViewModels
                     IsConnected = true;
                     //CheckConnectionCoroutine();
                 }
-            }
-            else
-            {
-                Server?.Disconnect();
-                Client.Close();
-                IsConnected = false;
             }
         }));
         private async Task CheckConnectionCoroutine()
