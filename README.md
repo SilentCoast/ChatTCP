@@ -2,8 +2,6 @@ Known problems:
 
 -First message sent will be the username of a sender. But there is no text saying that
 
--When host disconnects, clients are not disconnected automatically
-
 -In some cases exceptions are not handled
 
 -No notification when connection is lost
