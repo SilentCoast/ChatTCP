@@ -1,4 +1,4 @@
-﻿using ChatTCP.Classes.Logger;
+﻿using ChatTCPlib.Logger;
 using ChatTCP.ViewModels;
 using System.Windows;
 

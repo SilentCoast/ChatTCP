@@ -1,10 +1,9 @@
 ﻿using ChatTCP.Classes;
-using ChatTCP.Classes.Extensions;
-using ChatTCP.Classes.Logger;
-using ChatTCP.Classes.TCP;
+using ChatTCPlib.Extensions;
+using ChatTCPlib.Logger;
+using ChatTCPlib.TCP;
 using PropertyChanged;
 using System.Diagnostics;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Windows;
@@ -62,7 +61,7 @@ namespace ChatTCP.ViewModels
                 if (Client.StartClient(ServerIp))
                 {
                     IsConnected = true;
-                    //CheckConnectionCoroutine();
+                    CheckConnectionCoroutine();
                 }
             }
         }));
@@ -72,7 +71,6 @@ namespace ChatTCP.ViewModels
             {
                 //TODO: state is always unknown
                 //TODO: stop checking when disconnected
-                
                 Debug.WriteLine(Client.tcpClient.GetState().ToString());
                 await Task.Delay(1000);
             }

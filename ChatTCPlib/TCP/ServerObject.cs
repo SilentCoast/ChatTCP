@@ -2,10 +2,10 @@
 using System.Net;
 using System.Diagnostics;
 using System.IO;
-using ChatTCP.Classes.Logger;
+using ChatTCPlib.Logger;
 using Newtonsoft.Json;
 
-namespace ChatTCP.Classes.TCP
+namespace ChatTCPlib.TCP
 {
     public class ServerObject
     {
@@ -18,7 +18,7 @@ namespace ChatTCP.Classes.TCP
             this.logger = logger;
             ListenAsync();
         }
-        protected internal void RemoveConnection(string id)
+        private void RemoveConnection(string id)
         {
             ClientObject? client = clients.FirstOrDefault(c => c.Id == id);
             if (client != null)
@@ -27,7 +27,7 @@ namespace ChatTCP.Classes.TCP
             }
             client?.Close();
         }
-        protected internal async Task ListenAsync()
+        private async Task ListenAsync()
         {
             try
             {
@@ -52,7 +52,7 @@ namespace ChatTCP.Classes.TCP
             }
         }
 
-        protected internal async Task BroadcastMessageAsync(string message, string id = null)
+        private async Task BroadcastMessageAsync(string message, string id = null)
         {
             foreach (var client in clients)
             {
@@ -63,7 +63,7 @@ namespace ChatTCP.Classes.TCP
                 }
             }
         }
-        protected internal void Disconnect()
+        public void Disconnect()
         {
             PacketDTO packet = new PacketDTO()
             {

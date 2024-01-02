@@ -1,4 +1,4 @@
-﻿namespace ChatTCP.Classes.Logger
+﻿namespace ChatTCPlib.Logger
 {
     public class MessageEventArgs : EventArgs
     {

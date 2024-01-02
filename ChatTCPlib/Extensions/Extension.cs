@@ -1,7 +1,7 @@
 ﻿using System.Net.NetworkInformation;
 using System.Net.Sockets;
 
-namespace ChatTCP.Classes.Extensions
+namespace ChatTCPlib.Extensions
 {
     public static class Extension
     {
@@ -10,7 +10,7 @@ namespace ChatTCP.Classes.Extensions
             var foo = IPGlobalProperties.GetIPGlobalProperties()
               .GetActiveTcpConnections()
               .SingleOrDefault(x => x.LocalEndPoint.Equals(tcpClient.Client.LocalEndPoint)
-                                 && x.RemoteEndPoint.Equals(tcpClient.Client.RemoteEndPoint)
+                                 || x.RemoteEndPoint.Equals(tcpClient.Client.RemoteEndPoint)
               );
 
             return foo != null ? foo.State : TcpState.Unknown;

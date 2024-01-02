@@ -1,4 +1,4 @@
-﻿namespace ChatTCP.Classes
+﻿namespace ChatTCPlib
 {
     public class PacketDTO
     {

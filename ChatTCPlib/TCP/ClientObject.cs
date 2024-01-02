@@ -1,15 +1,15 @@
 ﻿using System.IO;
 using System.Net.Sockets;
 using System.Net;
-using ChatTCP.Classes.Logger;
+using ChatTCPlib.Logger;
 using System.Diagnostics;
 using Newtonsoft.Json;
 
-namespace ChatTCP.Classes.TCP
+namespace ChatTCPlib.TCP
 {
-    internal class ClientObject
+    public class ClientObject
     {
-        protected internal readonly string Id = Guid.NewGuid().ToString();
+        public readonly string Id = Guid.NewGuid().ToString();
         public StreamReader? Reader { get; set; } = null;
         public StreamWriter? Writer { get; set; } = null;
         public TcpClient tcpClient { get; set; }

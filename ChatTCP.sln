@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatTCP", "ChatTCP\ChatTCP.csproj", "{BDD16C36-4A00-40AC-88C6-45BF6FF3828A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatTCP", "ChatTCP\ChatTCP.csproj", "{BDD16C36-4A00-40AC-88C6-45BF6FF3828A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTK3ChatTCP", "GTK3ChatTCP\GTK3ChatTCP.csproj", "{E4A2A79D-114A-46BD-8BBE-C69FCF352D21}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatTCPlib", "ChatTCPlib\ChatTCPlib.csproj", "{5E9D644A-D042-4E17-89FF-3998014E0794}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{BDD16C36-4A00-40AC-88C6-45BF6FF3828A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDD16C36-4A00-40AC-88C6-45BF6FF3828A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDD16C36-4A00-40AC-88C6-45BF6FF3828A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4A2A79D-114A-46BD-8BBE-C69FCF352D21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4A2A79D-114A-46BD-8BBE-C69FCF352D21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4A2A79D-114A-46BD-8BBE-C69FCF352D21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4A2A79D-114A-46BD-8BBE-C69FCF352D21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E9D644A-D042-4E17-89FF-3998014E0794}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E9D644A-D042-4E17-89FF-3998014E0794}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E9D644A-D042-4E17-89FF-3998014E0794}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E9D644A-D042-4E17-89FF-3998014E0794}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
