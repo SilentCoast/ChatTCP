@@ -71,7 +71,7 @@ namespace ChatTCP.ViewModels
             {
                 //TODO: state is always unknown
                 //TODO: stop checking when disconnected
-                Debug.WriteLine(Client.tcpClient.GetState().ToString());
+                ConsoleLogger.Log(Client.tcpClient.GetState().ToString());
                 await Task.Delay(1000);
             }
         }

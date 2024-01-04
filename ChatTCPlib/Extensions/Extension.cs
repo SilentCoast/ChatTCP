@@ -5,15 +5,32 @@ namespace ChatTCPlib.Extensions
 {
     public static class Extension
     {
-        public static TcpState GetState(this TcpClient tcpClient)
+        public static TcpState GetState(this TcpClient client)
         {
-            var foo = IPGlobalProperties.GetIPGlobalProperties()
-              .GetActiveTcpConnections()
-              .SingleOrDefault(x => x.LocalEndPoint.Equals(tcpClient.Client.LocalEndPoint)
-                                 || x.RemoteEndPoint.Equals(tcpClient.Client.RemoteEndPoint)
-              );
+            //IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
+            //TcpConnectionInformation[] tcpConnections = ipProperties.GetActiveTcpConnections()
+            //    .Where(x => x.LocalEndPoint.Equals(client.Client.LocalEndPoint) 
+            //    || x.RemoteEndPoint.Equals(client.Client.RemoteEndPoint))
+            //    .ToArray();
 
-            return foo != null ? foo.State : TcpState.Unknown;
+            //if (tcpConnections != null && tcpConnections.Length > 0)
+            //{
+            //    TcpState stateOfConnection = tcpConnections.First().State;
+            //    if (stateOfConnection == TcpState.Established)
+            //    {
+            //        // Connection is OK
+            //    }
+            //    else
+            //    {
+            //        // No active TCP Connection to hostName:port
+            //    }
+            //    return stateOfConnection;
+            //}
+            if(client.Connected)
+            {
+                return TcpState.Established;
+            }
+            return TcpState.Unknown;
         }
     }
 }
