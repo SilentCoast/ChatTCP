@@ -80,7 +80,7 @@ namespace ChatTCPlib.TCP
             {
                 try
                 {
-                    string? response = await Reader.ReadLineAsync();
+                    string? response = Reader.ReadLine();
                     if (string.IsNullOrEmpty(response))
                     {
                         if(ConnectionOk)
