@@ -144,8 +144,13 @@ namespace ChatTCPlib.TCP
         {
             ConnectionIsLost = true;
             ConsoleLogger.Log("Connection lost");
+            ConnectionLostEvent?.Invoke(this, EventArgs.Empty);
+            Reconnect();
         }
-
+        private void Reconnect()
+        {
+            TryReconnect?.Invoke(this, EventArgs.Empty);
+        }
         /// <summary>
         /// Disconects this TCPClient
         /// </summary>
@@ -160,5 +165,7 @@ namespace ChatTCPlib.TCP
             tcpClient.Close();
         }
         public event EventHandler Disconnected;
+        public event EventHandler TryReconnect;
+        public event EventHandler ConnectionLostEvent;
     }
 }

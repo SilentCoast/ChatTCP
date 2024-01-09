@@ -35,6 +35,18 @@ namespace ChatTCP.ViewModels
             this.ErrorLogger = ErrorLogger;
             Client = new ClientObject(ConsoleLogger, MessageLogger);
             Client.Disconnected += Client_Disconnected;
+            Client.TryReconnect += Client_TryRecconect;
+            Client.ConnectionLostEvent += Client_ConnectionLostEvent;
+        }
+
+        private void Client_ConnectionLostEvent(object? sender, EventArgs e)
+        {
+            Connect.Execute(this);
+        }
+
+        private void Client_TryRecconect(object? sender, EventArgs e)
+        {
+            Connect.Execute(this);
         }
 
         private void Client_Disconnected(object? sender, EventArgs e)
