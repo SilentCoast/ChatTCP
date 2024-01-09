@@ -11,7 +11,6 @@ namespace ChatTCPlib.TCP
         public readonly string Id = Guid.NewGuid().ToString();
         public StreamReader? Reader { get; set; } = null;
         public StreamWriter? Writer { get; set; } = null;
-        private NetworkStream networkStream { get; set; }
         public TcpClient tcpClient { get; set; }
         ILogger ConsoleLogger { get; set; }
         ILogger MessageLogger { get; set; }
@@ -44,7 +43,6 @@ namespace ChatTCPlib.TCP
                 NetworkStream stream = tcpClient.GetStream();
                 Reader = new StreamReader(stream);
                 Writer = new StreamWriter(stream);
-                networkStream = stream;
                 if (Writer is null || Reader is null)
                 {
                     throw new Exception("Error while getting Stream");
@@ -127,7 +125,7 @@ namespace ChatTCPlib.TCP
                         }
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
                     Debug.WriteLine("Failed to recieve message from the server");
                     break;

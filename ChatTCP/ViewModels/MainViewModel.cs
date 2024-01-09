@@ -3,15 +3,11 @@ using ChatTCPlib;
 using ChatTCPlib.Logger;
 using ChatTCPlib.TCP;
 using PropertyChanged;
-using System.Diagnostics;
-using System.Net;
-using System.Net.Sockets;
 using System.Windows;
 using System.Windows.Threading;
 
 namespace ChatTCP.ViewModels
 {
-    //TODO: add event handlers for connection lost/resume in clientObject to disable/enable button "send"
     [AddINotifyPropertyChangedInterface]
     public class MainViewModel
     {
@@ -75,6 +71,7 @@ namespace ChatTCP.ViewModels
                 {
                     Server = new ServerObject(ConsoleLogger);
                 }
+                CreateNewClient();
                 if (Client.StartClient(ServerIp))
                 {
                     IsConnected = true;
