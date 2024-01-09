@@ -82,9 +82,10 @@ namespace ChatTCPlib.TCP
             {
                 try
                 {
-                    if(!networkStream.DataAvailable)
+                    
+                    if (ConnectionOk)
                     {
-                        if (ConnectionOk)
+                        if (!networkStream.DataAvailable)
                         {
                             ConnectionOk = false;
                             await SendMessageAsync(new PacketDTO { command = TCPCommand.connectionCheck });
@@ -98,12 +99,11 @@ namespace ChatTCPlib.TCP
                                 }
                             });
                         }
-                        continue;
                     }
                     string? response = await Reader.ReadLineAsync();
                     if (string.IsNullOrEmpty(response))
                     {
-                        
+                        continue;
                     }
                     else
                     {
