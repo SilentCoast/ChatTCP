@@ -18,11 +18,13 @@ namespace ChatTCPlib.TCP
         ILogger MessageLogger { get; set; }
         bool ConnectionOk {  get; set; } = true;
         bool ConnectionIsLost { get; set; }
+        string Username {  get; set; }
 
-        public ClientObject(ILogger consoleLogger, ILogger messageLogger)
+        public ClientObject(ILogger consoleLogger, ILogger messageLogger,string username)
         {
             ConsoleLogger = consoleLogger;
             MessageLogger = messageLogger;
+            this.Username = username;
         }
         public ClientObject(TcpClient tcpClient)
         {
@@ -50,7 +52,7 @@ namespace ChatTCPlib.TCP
                 }
                 Task.Run(ReceiveMessageCoroutine);
                 Task.Run(CheckConnectionCoroutine);
-
+                SendMessageAsync(Username);
                 ConsoleLogger.Log("Client started");
             }
             catch (Exception ex)
@@ -149,6 +151,7 @@ namespace ChatTCPlib.TCP
         }
         private void Reconnect()
         {
+            ConsoleLogger.Log("Attemp to reconnect...");
             TryReconnect?.Invoke(this, EventArgs.Empty);
         }
         /// <summary>

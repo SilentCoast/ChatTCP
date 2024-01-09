@@ -80,6 +80,7 @@ namespace ChatTCPlib.TCP
         {
             try
             {
+                
                 string? jsonString = await reader.ReadLineAsync();
                 PacketDTO packet = JsonConvert.DeserializeObject<PacketDTO>(jsonString);
                 string? userName = packet.message;

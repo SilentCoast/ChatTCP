@@ -33,7 +33,7 @@ namespace ChatTCP.ViewModels
             MessageLogger = new Logger();
             MessageLogger.Logged += MessageLogger_Logged;
             this.ErrorLogger = ErrorLogger;
-            Client = new ClientObject(ConsoleLogger, MessageLogger);
+            Client = new ClientObject(ConsoleLogger, MessageLogger,GetLocalIPAddress());
             Client.Disconnected += Client_Disconnected;
             Client.TryReconnect += Client_TryRecconect;
             Client.ConnectionLostEvent += Client_ConnectionLostEvent;
