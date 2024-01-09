@@ -1,5 +1,4 @@
 ﻿using ChatTCP.Classes;
-using ChatTCPlib.Extensions;
 using ChatTCPlib.Logger;
 using ChatTCPlib.TCP;
 using PropertyChanged;
@@ -11,6 +10,7 @@ using System.Windows.Threading;
 
 namespace ChatTCP.ViewModels
 {
+    //TODO: add event handlers for connection lost/resume in clientObject to disable/enable button "send"
     [AddINotifyPropertyChangedInterface]
     public class MainViewModel
     {
@@ -61,20 +61,10 @@ namespace ChatTCP.ViewModels
                 if (Client.StartClient(ServerIp))
                 {
                     IsConnected = true;
-                    CheckConnectionCoroutine();
                 }
             }
         }));
-        private async Task CheckConnectionCoroutine()
-        {
-            while(true)
-            {
-                //TODO: state is always unknown
-                //TODO: stop checking when disconnected
-                ConsoleLogger.Log(Client.tcpClient.GetState().ToString());
-                await Task.Delay(1000);
-            }
-        }
+        
         private RelayCommand sendMessage;
 
         public RelayCommand SendMessage => sendMessage ?? (sendMessage = new RelayCommand(async p =>

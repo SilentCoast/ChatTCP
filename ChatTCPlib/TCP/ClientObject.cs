@@ -15,6 +15,8 @@ namespace ChatTCPlib.TCP
         public TcpClient tcpClient { get; set; }
         ILogger ConsoleLogger { get; set; }
         ILogger MessageLogger { get; set; }
+        bool ConnectionOk {  get; set; } = true;
+        bool ConnectionIsLost { get; set; } = false;
 
         public ClientObject(ILogger consoleLogger, ILogger messageLogger)
         {
@@ -81,10 +83,28 @@ namespace ChatTCPlib.TCP
                     string? response = await Reader.ReadLineAsync();
                     if (string.IsNullOrEmpty(response))
                     {
-                        continue;
+                        if(ConnectionOk)
+                        {
+                            ConnectionOk = false;
+                            await SendMessageAsync(new PacketDTO { command = TCPCommand.connectionCheck });
+                            Task.Run(() =>
+                            {
+                                Task.Delay(3000);
+                                if (ConnectionOk == false)
+                                {
+                                    //if we didn't recieve any messages in 3 sec connection has been lost
+                                    ConnectionLost();
+                                }
+                            });
+                        }
                     }
                     else
                     {
+                        ConnectionOk = true;
+                        if(ConnectionIsLost)
+                        {
+                            ConnectionResumed();
+                        }
                         PacketDTO packet = JsonConvert.DeserializeObject<PacketDTO>(response);
                         if (packet != null)
                         {
@@ -108,6 +128,19 @@ namespace ChatTCPlib.TCP
                 }
             }
         }
+
+        private void ConnectionResumed()
+        {
+            ConnectionIsLost = false;
+            ConsoleLogger.Log("Connection resumed");
+        }
+
+        private void ConnectionLost()
+        {
+            ConnectionIsLost = true;
+            ConsoleLogger.Log("Connection lost");
+        }
+
         /// <summary>
         /// Disconects this TCPClient
         /// </summary>

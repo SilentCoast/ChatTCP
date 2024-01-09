@@ -52,7 +52,7 @@ namespace ChatTCPlib.TCP
             }
         }
 
-        private async Task BroadcastMessageAsync(string message, string id = null)
+        private async Task BroadcastMessageAsync(string message, string? id = null)
         {
             foreach (var client in clients)
             {
@@ -105,7 +105,11 @@ namespace ChatTCPlib.TCP
                             packet.command = TCPCommand.message;
                             packet.message = $"{userName} disconnected";
                             await BroadcastMessageAsync(JsonConvert.SerializeObject(packet), id);
-                            break;
+                        }
+                        else if (packet.command == TCPCommand.connectionCheck)
+                        {
+                            //just resending packet to let clients know that connection is active
+                            await BroadcastMessageAsync(JsonConvert.SerializeObject(packet), id);
                         }
                     }
                     catch
