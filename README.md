@@ -1,10 +1,6 @@
 Known problems:
 
--First message sent will be the username of a sender. But there is no text saying that
-
 -In some cases exceptions are not handled
-
--No notification when connection is lost
 
 -Chat is not cleaned when leaving or entering a connection
 
