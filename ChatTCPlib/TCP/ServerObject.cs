@@ -11,7 +11,7 @@ namespace ChatTCPlib.TCP
     {
         private readonly ILogger logger;
 
-        TcpListener tcpListener = new TcpListener(IPAddress.Any, DataHolder.Port); 
+        TcpListener tcpListener = new TcpListener(IPAddress.Any, NetworkInfo.Port); 
         List<ClientObject> clients = new List<ClientObject>(); 
         public ServerObject(ILogger logger)
         {

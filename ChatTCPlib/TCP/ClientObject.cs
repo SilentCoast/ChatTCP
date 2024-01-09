@@ -1,9 +1,7 @@
-﻿using System.IO;
-using System.Net.Sockets;
-using System.Net;
-using ChatTCPlib.Logger;
-using System.Diagnostics;
+﻿using ChatTCPlib.Logger;
 using Newtonsoft.Json;
+using System.Net;
+using System.Net.Sockets;
 
 namespace ChatTCPlib.TCP
 {
@@ -12,19 +10,19 @@ namespace ChatTCPlib.TCP
         public readonly string Id = Guid.NewGuid().ToString();
         public StreamReader? Reader { get; set; } = null;
         public StreamWriter? Writer { get; set; } = null;
-        private NetworkStream networkStream {  get; set; }
+        private NetworkStream networkStream { get; set; }
         public TcpClient tcpClient { get; set; }
         ILogger ConsoleLogger { get; set; }
         ILogger MessageLogger { get; set; }
-        bool ConnectionOk {  get; set; } = true;
+        bool ConnectionOk { get; set; } = true;
         bool ConnectionIsLost { get; set; }
-        string Username {  get; set; }
+        string Username { get; set; }
 
-        public ClientObject(ILogger consoleLogger, ILogger messageLogger,string username)
+        public ClientObject(ILogger consoleLogger, ILogger messageLogger)
         {
             ConsoleLogger = consoleLogger;
             MessageLogger = messageLogger;
-            this.Username = username;
+            
         }
         public ClientObject(TcpClient tcpClient)
         {
@@ -37,11 +35,11 @@ namespace ChatTCPlib.TCP
         public bool StartClient(string serverIp)
         {
             tcpClient = new TcpClient();
-
+            Username = NetworkInfo.GetLocalIPAddress();
             try
             {
                 IPAddress ip = IPAddress.Parse(serverIp);
-                tcpClient.Connect(new IPEndPoint(ip, DataHolder.Port));
+                tcpClient.Connect(new IPEndPoint(ip, NetworkInfo.Port));
                 NetworkStream stream = tcpClient.GetStream();
                 Reader = new StreamReader(stream);
                 Writer = new StreamWriter(stream);
@@ -88,7 +86,7 @@ namespace ChatTCPlib.TCP
                 {
                     ConnectionOk = false;
                     await SendMessageAsync(new PacketDTO { command = TCPCommand.connectionCheck });
-                    
+
                     await Task.Delay(3000);
                     if (ConnectionOk == false)
                     {
@@ -128,7 +126,7 @@ namespace ChatTCPlib.TCP
                         }
                     }
                 }
-                catch(Exception ex) 
+                catch (Exception ex)
                 {
                     ConsoleLogger.Log(ex.Message);
                     break;
