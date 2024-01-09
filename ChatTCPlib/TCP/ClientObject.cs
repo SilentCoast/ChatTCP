@@ -16,7 +16,7 @@ namespace ChatTCPlib.TCP
         ILogger ConsoleLogger { get; set; }
         ILogger MessageLogger { get; set; }
         bool ConnectionOk {  get; set; } = true;
-        bool ConnectionIsLost { get; set; } = false;
+        bool ConnectionIsLost { get; set; }
 
         public ClientObject(ILogger consoleLogger, ILogger messageLogger)
         {
@@ -87,9 +87,9 @@ namespace ChatTCPlib.TCP
                         {
                             ConnectionOk = false;
                             await SendMessageAsync(new PacketDTO { command = TCPCommand.connectionCheck });
-                            Task.Run(() =>
+                            Task.Run(async () =>
                             {
-                                Task.Delay(3000);
+                                await Task.Delay(3000);
                                 if (ConnectionOk == false)
                                 {
                                     //if we didn't recieve any messages in 3 sec connection has been lost
@@ -123,7 +123,7 @@ namespace ChatTCPlib.TCP
                 }
                 catch(Exception ex) 
                 {
-                    Debug.WriteLine(ex);
+                    ConsoleLogger.Log(ex.Message);
                     break;
                 }
             }

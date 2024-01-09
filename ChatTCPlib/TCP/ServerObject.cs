@@ -44,7 +44,7 @@ namespace ChatTCPlib.TCP
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                logger.Log(ex.Message);
             }
             finally
             {
@@ -115,7 +115,7 @@ namespace ChatTCPlib.TCP
                     catch
                     {
                         packet.message = $"Connection with {userName} has been lost";
-                        Debug.WriteLine(packet.message);
+                        logger.Log(packet.message);
                         await BroadcastMessageAsync(JsonConvert.SerializeObject(packet), id);
                         break;
                     }

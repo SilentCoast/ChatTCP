@@ -45,7 +45,7 @@ namespace ChatTCP.ViewModels
         private RelayCommand connect;
         public RelayCommand Connect => connect ?? (connect = new RelayCommand(async p =>
         {
-            //TODO: freeze of UI when waiting to time out when connecting to non existent server
+            //TODO: fix freeze of UI when waiting to time out when connecting to non existent server
             if (IsConnected)
             {
                 Server?.Disconnect();
