@@ -1,5 +1,6 @@
 ﻿using ChatTCPlib.Logger;
 using Newtonsoft.Json;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 
@@ -55,7 +56,7 @@ namespace ChatTCPlib.TCP
             }
             catch (Exception ex)
             {
-                ConsoleLogger.Log(ex.Message);
+                ConsoleLogger.Log("Failed to connect");
                 return false;
             }
             return true;
@@ -128,7 +129,7 @@ namespace ChatTCPlib.TCP
                 }
                 catch (Exception ex)
                 {
-                    ConsoleLogger.Log(ex.Message);
+                    Debug.WriteLine("Failed to recieve message from the server");
                     break;
                 }
             }
