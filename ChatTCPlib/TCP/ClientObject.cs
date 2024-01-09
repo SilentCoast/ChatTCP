@@ -80,10 +80,9 @@ namespace ChatTCPlib.TCP
             {
                 try
                 {
-                    string? response = Reader.ReadLine();
-                    if (string.IsNullOrEmpty(response))
+                    if (Reader.EndOfStream)
                     {
-                        if(ConnectionOk)
+                        if (ConnectionOk)
                         {
                             ConnectionOk = false;
                             await SendMessageAsync(new PacketDTO { command = TCPCommand.connectionCheck });
@@ -97,6 +96,12 @@ namespace ChatTCPlib.TCP
                                 }
                             });
                         }
+                        continue;
+                    }
+                    string? response = await Reader.ReadLineAsync();
+                    if (string.IsNullOrEmpty(response))
+                    {
+                        
                     }
                     else
                     {
