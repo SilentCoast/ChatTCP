@@ -20,11 +20,11 @@ namespace ChatTCPlib.TCP
         bool ConnectionIsLost { get; set; }
         string Username {  get; set; }
 
-        public ClientObject(ILogger consoleLogger, ILogger messageLogger,string username)
+        public ClientObject(ILogger consoleLogger, ILogger messageLogger)
         {
             ConsoleLogger = consoleLogger;
             MessageLogger = messageLogger;
-            this.Username = username;
+            this.Username = NetworkInfo.GetLocalIPAddress();
         }
         public ClientObject(TcpClient tcpClient)
         {
@@ -41,7 +41,7 @@ namespace ChatTCPlib.TCP
             try
             {
                 IPAddress ip = IPAddress.Parse(serverIp);
-                tcpClient.Connect(new IPEndPoint(ip, DataHolder.Port));
+                tcpClient.Connect(new IPEndPoint(ip, NetworkInfo.Port));
                 NetworkStream stream = tcpClient.GetStream();
                 Reader = new StreamReader(stream);
                 Writer = new StreamWriter(stream);

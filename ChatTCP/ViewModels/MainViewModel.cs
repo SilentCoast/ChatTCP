@@ -1,4 +1,5 @@
 ﻿using ChatTCP.Classes;
+using ChatTCPlib;
 using ChatTCPlib.Logger;
 using ChatTCPlib.TCP;
 using PropertyChanged;
@@ -37,7 +38,7 @@ namespace ChatTCP.ViewModels
         }
         private void CreateNewClient()
         {
-            Client = new ClientObject(ConsoleLogger, MessageLogger, GetLocalIPAddress());
+            Client = new ClientObject(ConsoleLogger, MessageLogger);
             Client.Disconnected += Client_Disconnected;
             Client.TryReconnect += Client_TryRecconect;
             Client.ConnectionLostEvent += Client_ConnectionLostEvent;
@@ -95,21 +96,10 @@ namespace ChatTCP.ViewModels
         {
             if (IsServer)
             {
-                ServerIp = GetLocalIPAddress();
+                ServerIp = NetworkInfo.GetLocalIPAddress();
             }
         }
-        public static string GetLocalIPAddress()
-        {
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (var ip in host.AddressList)
-            {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    return ip.ToString();
-                }
-            }
-            throw new Exception("No network adapters with an IPv4 address in the system!");
-        }
+        
         private void MessageLogger_Logged(object sender, MessageEventArgs e)
         {
             MessagesText += e.Message;
