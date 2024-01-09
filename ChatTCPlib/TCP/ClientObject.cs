@@ -49,6 +49,7 @@ namespace ChatTCPlib.TCP
                     throw new Exception("Error while getting Stream");
                 }
                 Task.Run(ReceiveMessageCoroutine);
+                Task.Run(CheckConnectionCoroutine);
 
                 ConsoleLogger.Log("Client started");
             }
@@ -76,50 +77,47 @@ namespace ChatTCPlib.TCP
             await Writer.WriteLineAsync(jsonString);
             await Writer.FlushAsync();
         }
+        private async Task CheckConnectionCoroutine()
+        {
+            await Task.Delay(3000);
+            while (true)
+            {
+                if (ConnectionOk)
+                {
+                    ConnectionOk = false;
+                    await SendMessageAsync(new PacketDTO { command = TCPCommand.connectionCheck });
+                    
+                    await Task.Delay(3000);
+                    if (ConnectionOk == false)
+                    {
+                        //if we didn't recieve any messages in 3 sec connection has been lost
+                        ConnectionLost();
+                    }
+                }
+            }
+        }
         private async Task ReceiveMessageCoroutine()
         {
             while (true)
             {
                 try
                 {
-                    
-                    if (ConnectionOk)
-                    {
-                        if (!networkStream.DataAvailable)
-                        {
-                            ConnectionOk = false;
-                            await SendMessageAsync(new PacketDTO { command = TCPCommand.connectionCheck });
-                            Task.Run(async () =>
-                            {
-                                await Task.Delay(3000);
-                                if (ConnectionOk == false)
-                                {
-                                    //if we didn't recieve any messages in 3 sec connection has been lost
-                                    ConnectionLost();
-                                }
-                            });
-                        }
-                    }
                     string? response = await Reader.ReadLineAsync();
-                    if (string.IsNullOrEmpty(response))
-                    {
-                        continue;
-                    }
-                    else
+                    if (!string.IsNullOrEmpty(response))
                     {
                         ConnectionOk = true;
-                        if(ConnectionIsLost)
+                        if (ConnectionIsLost)
                         {
                             ConnectionResumed();
                         }
                         PacketDTO packet = JsonConvert.DeserializeObject<PacketDTO>(response);
                         if (packet != null)
                         {
-                            if(packet.command == TCPCommand.message)
+                            if (packet.command == TCPCommand.message)
                             {
                                 MessageLogger.Log(packet.message);
                             }
-                            else if(packet.command == TCPCommand.disconnect)
+                            else if (packet.command == TCPCommand.disconnect)
                             {
                                 Close();
                                 Disconnected?.Invoke(this, EventArgs.Empty);
