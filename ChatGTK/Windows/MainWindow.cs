@@ -49,7 +49,7 @@ public class MainWindow : Window
     public MainWindow() : base("MainWindow")
     {
         var builder = new Builder();
-        builder.AddFromFile("../../../Resources/ChatTCP.glade");
+        builder.AddFromFile("Resources/ChatTCP.glade");
 
         var mainWindow = builder.GetObject("mainWindow") as Gtk.Window;
 
