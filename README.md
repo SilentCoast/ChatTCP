@@ -13,3 +13,8 @@ WPF:
 GTK:
 
 ![AHcABaHXoxI](https://github.com/SilentCoast/ChatTCP/assets/94042423/8fad7e51-f83e-49b6-8ae3-a7b43cc80211)
+
+
+Also works on Linux(Ubuntu):
+
+![image](https://github.com/SilentCoast/ChatTCP/assets/94042423/5f5841db-8c33-449d-b6d2-4f18194dcd05)
