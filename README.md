@@ -25,11 +25,3 @@ The GTK version of ChatTCP provides compatibility with Linux systems, ensuring s
 
 
 Enjoy chatting with ChatTCP! 🚀
-
-
-
-Known problems:
-
--Chat is not cleaned when leaving or entering a connection
-
--If there are 3+ users and one of them disconnects and connects back: this user may not be up to date with other users.
