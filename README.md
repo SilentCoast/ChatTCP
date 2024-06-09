@@ -13,15 +13,14 @@ ChatTCP is a simple chat application that enables communication between two user
 
 ### WPF Version (Windows)
 
+The WPF version of ChatTCP offers a native Windows experience with a user-friendly interface.
 ![WPF Version](https://github.com/SilentCoast/ChatTCP/assets/94042423/9d34da89-9085-46d4-b1c1-8be8bbc9b4a0)
 
-The WPF version of ChatTCP offers a native Windows experience with a user-friendly interface.
 
 ### GTK Version (Linux)
 
-![GTK Version](https://github.com/SilentCoast/ChatTCP/assets/94042423/8fad7e51-f83e-49b6-8ae3-a7b43cc80211)
-
 The GTK version of ChatTCP provides compatibility with Linux systems, ensuring seamless communication on your preferred platform.
+![GTK Version](https://github.com/SilentCoast/ChatTCP/assets/94042423/8fad7e51-f83e-49b6-8ae3-a7b43cc80211)
 
 
 Enjoy chatting with ChatTCP! 🚀
